@@ -46,6 +46,43 @@ $(function() {
     step1();
   });
 
+  $('#pip-button').on('click', () => {
+    const video = $('#their-video').get(0);
+    console.log(video);
+
+    if (!document.pictureInPictureEnabled) {
+      console.warn('This browser does not support for PIP');
+      return;
+    }
+
+    if (video.disablePictureInPicture) {
+      console.warn('This video is disabled for PIP');
+      return;
+    }
+
+    // If there is no element in Picture-in-Picture yet, let's request Picture
+    if (!document.pictureInPictureElement) {
+      video.requestPictureInPicture()
+      .then((pipWindow) => {
+        console.log('PiP is succeeded!') 
+        console.log(pipWindow);
+      })
+      .catch(error => {
+        // Video failed to enter Picture-in-Picture mode.
+        console.error('Error was occured at `requestPictureInPicture()`');
+        console.error(`${error.name}: ${error}`);
+        return;
+      });
+    } else {
+      document.exitPictureInPicture()
+      .catch(error => {
+        // Video failed to leave Picture-in-Picture mode.
+        console.error('Error was occured at `exitPictureInPicture()`');
+        console.error(`${error.name}: ${error}`);
+      });
+    }
+  });
+
   // set up audio and video input selectors
   const audioSelect = $('#audioSource');
   const videoSelect = $('#videoSource');
